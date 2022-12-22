@@ -1,0 +1,52 @@
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+
+
+
+const int sensor_pin = A1;  /* Soil moisture sensor O/P pin */
+
+// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+
+
+
+void setup() {
+  Serial.begin(9600); /* Define baud rate for serial communication */
+  
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;);
+
+
+}
+
+void loop() {
+
+ display.clearDisplay();
+  float moisture_percentage;
+  int sensor_analog;
+  sensor_analog = analogRead(sensor_pin);
+  moisture_percentage = ( 100 - ( (sensor_analog/1023.00) * 100 ) );
+  Serial.print("Moisture Percentage = ");
+  Serial.print(moisture_percentage);
+  Serial.print("%\n\n");
+
+
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 10);
+  // Display static text
+   display.println("Moisture %");
+   display.setTextSize(3);
+    display.setCursor(0, 50);
+   display.println(moisture_percentage);
+   display.display(); 
+  
+  delay(1000);
+}
+
+
